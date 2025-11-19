@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.aplicacionesiot.nav.Route
 
+
 @Composable
 fun RegisterScreen(nav: NavController) {
     var name by remember { mutableStateOf("") }
