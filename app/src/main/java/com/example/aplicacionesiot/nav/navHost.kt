@@ -1,10 +1,10 @@
 package com.example.aplicacionesiot.nav
 
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -16,8 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.NavController
-import com.airbnb.lottie.compose.LottieAnimation
+import com.example.aplicacionesiot.R
 import com.example.aplicacionesiot.screens.HomeScreen
 import com.example.aplicacionesiot.screens.LoginScreen
 import com.example.aplicacionesiot.screens.RegisterScreen
@@ -46,5 +45,18 @@ fun SplashScreen(onFinish: () -> Unit) {
         // forzamos un fallback de 200-400ms para transicionar suave:
         kotlinx.coroutines.delay(250L)
         onFinish()
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primary)
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_launcher_background), // o Image con painterResource
+                    contentDescription = null,
+            modifier = Modifier
+                .size(128.dp)
+                .align(Alignment.Center)
+        )
     }
 }
