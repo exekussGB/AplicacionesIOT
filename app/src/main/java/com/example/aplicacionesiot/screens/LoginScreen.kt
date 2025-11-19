@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.aplicacionesiot.nav.Route
+import com.example.aplicacionesiot.ui.theme.AplicacionesIOTTheme
 
 @Composable
 fun LoginContent(
@@ -68,7 +69,7 @@ fun LoginScreen(nav: NavController) {
 @Preview(showBackground = true)
 @Composable
 fun LoginContentPreview() {
-    AppTheme {
+    AplicacionesIOTTheme {
         LoginContent(
             user = "javier@demo.cl",
             pass = "123456",
