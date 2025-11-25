@@ -1,5 +1,6 @@
 package com.example.aplicacionesiot.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,14 +21,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.aplicacionesiot.R
+import com.example.aplicacionesiot.data.local.StoreUser
+import com.example.aplicacionesiot.data.remote.api.AuthApi
+import com.example.aplicacionesiot.data.repository.AuthRepository
 import com.example.aplicacionesiot.nav.Route
 import com.example.aplicacionesiot.ui.theme.AplicacionesIOTTheme
+import com.example.aplicacionesiot.viewmodel.AuthViewModel
+import com.example.aplicacionesiot.viewmodel.AuthViewModelFactory
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 @Composable
 fun LoginContent(
@@ -65,18 +75,43 @@ fun LoginContent(
         }
     }
 }
+
 @Composable
 fun LoginScreen(nav: NavController) {
-    var user by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    var email by remember { mutableStateOf("") }
     var pass by remember { mutableStateOf("") }
+
+    // Instancia "manual" de ViewModel (solo para demostración; idealmente usar Hilt/Koin)
+    val retrofit = Retrofit.Builder()
+        .baseUrl("http://10.0.2.2:3000/") // Asegúrate de usar tu IP o localhost correcto
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    val api = retrofit.create(AuthApi::class.java)
+    val repo = AuthRepository(api)
+    val storeUser = StoreUser(context) // Crear instancia de StoreUser
+    val viewModel: AuthViewModel = viewModel(factory = AuthViewModelFactory(repo, storeUser))
+
     LoginContent(
-        user, pass,
-        onUserChange = { user = it },
+        user = email,
+        pass = pass,
+        onUserChange = { email = it },
         onPassChange = { pass = it },
-        onLoginClick = { nav.navigate(Route.Home.path) },
+        onLoginClick = {
+            viewModel.login(email, pass,
+                onSuccess = {
+                    Toast.makeText(context, "Login OK", Toast.LENGTH_SHORT).show()
+                    nav.navigate(Route.Home.path)
+                },
+                onFail = {
+                    Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+                }
+            )
+        },
         onRegisterClick = { nav.navigate(Route.Register.path) }
     )
 }
+
 @Preview(showBackground = true)
 @Composable
 fun LoginContentPreview() {
@@ -90,9 +125,4 @@ fun LoginContentPreview() {
             onRegisterClick = {}
         )
     }
-}
-
-@Composable
-fun AppTheme(content: @Composable () -> Unit) {
-    TODO("Not yet implemented")
 }
